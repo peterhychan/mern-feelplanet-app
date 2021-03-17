@@ -2,32 +2,35 @@
   <div class="row">
     <h1 class="text-center">Edit Location</h1>
     <div class="col-6 offset-3">
-      <form action="/locations/<%=location._id%>?_method=PUT" method="POST">
+      <form action="/locations/<%=location._id%>?_method=PUT" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
           <label class="form-label" for="title">Title</label>
-          <input class="form-control" type="text" id="title" name="location[title]" value="<%=location.title %>">
+          <input class="form-control" type="text" id="title" name="location[title]" value="<%=location.title %>"
+            required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="address">Address</label>
-          <input class="form-control" type="text" id="address" name="location[address]" value="<%=location.address %>">
+          <input class="form-control" type="text" id="address" name="location[address]" value="<%=location.address %>"
+            required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="image">Image URL</label>
-          <input class="form-control" type="text" id="image" name="location[image]" value="<%=location.image %>">
+          <input class="form-control" type="text" id="image" name="location[image]" value="<%=location.image %>"
+            required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="budget">Budget for Visiting</label>
           <div class="input-group">
             <span class="input-group-text" id="budget-label">$</span>
             <input type="text" class="form-control" id="budget" placeholder="0.00" aria-label="budget"
-              aria-describedby="budget-label" name="location[budget]" value="<%=location.budget %>">
+              aria-describedby="budget-label" name="location[budget]" value="<%=location.budget %>" required>
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="description">Description</label>
-          <textarea class="form-control" type="text" id="description"
-            name="location[description]"><%= location.description%></textarea>
+          <textarea class="form-control" type="text" id="description" name="location[description]"
+            required><%= location.description %></textarea>
         </div>
         <div class="mb-3">
           <button class="btn btn-info">Update Location</button>
