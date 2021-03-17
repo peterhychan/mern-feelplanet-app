@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display</title>
+</head>
+
+<body>
+    <h1><%= location.title %></h1>
+    <h2><%= location.address %></h2>
+    <p> <a href="/locations/<%=location._id%>/update">Edit</a>
+    </p>
+    <p>
+    <form action="/locations/<%=location._id%>?_method=DELETE" method="POST">
+        <button>Delete</button>
+    </form>
+    </p>
+    <footer>
+        <a href="/locations">All Locations</a>
+    </footer>
+</body>
+
+</html>
