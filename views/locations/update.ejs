@@ -1,27 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Location</title>
-</head>
-
-<body>
-    <h1>Edit Location</h1>
-    <form action="/locations/<%=location._id%>?_method=PUT" method="POST">
-        <div>
-            <label for="title">Title</label>
-            <input type="text" id="title" name="location[title]" value="<%=location.title %>">
+<% layout('layouts/boilerplate')%>
+  <div class="row">
+    <h1 class="text-center">Edit Location</h1>
+    <div class="col-6 offset-3">
+      <form action="/locations/<%=location._id%>?_method=PUT" method="POST">
+        <div class="mb-3">
+          <label class="form-label" for="title">Title</label>
+          <input class="form-control" type="text" id="title" name="location[title]" value="<%=location.title %>">
         </div>
-        <div>
-            <label for="address">Address</label>
-            <input type="text" id="address" name="location[address]" value="<%= location.address%>">
+        <div class="mb-3">
+          <label class="form-label" for="address">Address</label>
+          <input class="form-control" type="text" id="address" name="location[address]" value="<%=location.address %>">
         </div>
-        <button>Update Location</button>
-    </form>
-    <a href="/locations/<%= location._id%>">Back To Location</a>
+        <div class="mb-3">
+          <label class="form-label" for="image">Image URL</label>
+          <input class="form-control" type="text" id="image" name="location[image]" value="<%=location.image %>">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="budget">Budget for Visiting</label>
+          <div class="input-group">
+            <span class="input-group-text" id="budget-label">$</span>
+            <input type="text" class="form-control" id="budget" placeholder="0.00" aria-label="budget"
+              aria-describedby="budget-label" name="location[budget]" value="<%=location.budget %>">
+          </div>
+        </div>
 
-</body>
+        <div class="mb-3">
+          <label class="form-label" for="description">Description</label>
+          <textarea class="form-control" type="text" id="description"
+            name="location[description]"><%= location.description%></textarea>
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-info">Update Location</button>
+        </div>
+      </form>
+      <a href="/locations/<%= location._id%>">Back To Location</a>
 
-</html>
+    </div>
+  </div>
