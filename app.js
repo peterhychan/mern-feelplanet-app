@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
-const { locationSchema } = require("./validateSchemaJoi.js");
+const { locationSchema, reviewSchema } = require("./validateSchemaJoi.js");
 const ejs_mate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
 const catchAsync = require("./utils/catchAsync");
@@ -13,8 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 // helper library for enhancing development experience
 app.use(methodOverride("_method"));
 
-// location model
+// models
 const Location = require("./models/location");
+const Review = require("./models/review");
 
 // database connection settings
 mongoose.connect("mongodb://localhost:27017/feelplanet", {
@@ -37,7 +38,21 @@ const validateLocation = (req, res, next) => {
   // Server-Side Validation Attempt #2 with Joi
   const result = locationSchema.validate(req.body);
   if (result.error) {
-    const message = error.details.map((element) => element.message).join(" ,");
+    const message = result.error.details
+      .map((element) => element.message)
+      .join(" ,");
+    throw new ExpressError(message, 400);
+  } else {
+    next();
+  }
+};
+
+const validateReview = (req, res, next) => {
+  const result = reviewSchema.validate(req.body);
+  if (result.error) {
+    const message = result.error.details
+      .map((element) => element.message)
+      .join(" ,");
     throw new ExpressError(message, 400);
   } else {
     next();
@@ -45,7 +60,7 @@ const validateLocation = (req, res, next) => {
 };
 
 // controllers
-app.get("/", (req, res, next) => {
+app.get("/", (req, res) => {
   res.render("homepage");
 });
 
@@ -64,7 +79,7 @@ app.get("/locations/new", (req, res) => {
 app.post(
   "/locations",
   validateLocation,
-  catchAsync(async (req, res) => {
+  catchAsync(async (req, res, next) => {
     // Server-Side Validation Attempt #1
     // if (!req.body.location) {
     //   throw new ExpressError("Invalid Location Info Provided.", 400);
@@ -78,7 +93,7 @@ app.post(
 app.get(
   "/locations/:id",
   catchAsync(async (req, res, next) => {
-    const location = await Location.findById(req.params.id);
+    const location = await Location.findById(req.params.id).populate("reviews");
     res.render("locations/show", { location });
   })
 );
@@ -112,21 +127,35 @@ app.delete(
   })
 );
 
-// app.get("/addlocation", async (req, res) => {
-//   const location = new Location({
-//     title: "Bolboa Park",
-//     description: "Nice Place to rest in San Francisco",
-//   });
-//   await location.save();
-//   res.send(location);
-// });
+app.post(
+  "/locations/:id/reviews",
+  validateReview,
+  catchAsync(async (req, res) => {
+    const location = await Location.findById(req.params.id);
+    const review = new Review(req.body.review);
+    location.reviews.push(review);
+    await review.save();
+    await location.save();
+    res.redirect(`/locations/${location._id}`);
+  })
+);
+
+app.delete(
+  "/locations/:id/reviews/:reviewId",
+  catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await Location.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/locations/${id}`);
+  })
+);
 
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found.", 404));
 });
 
 app.use((err, req, res, next) => {
-  const { message = "Error Occurred.", statusCode = 500 } = err;
+  const { statusCode = 500 } = err;
   if (!err.message) {
     err.message = "Something Went Wrong. Please Try Again.";
   }
