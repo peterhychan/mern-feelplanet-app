@@ -8,6 +8,11 @@ const ExpressError = require("./utils/ExpressError");
 const path = require("path");
 const app = express();
 
+//passport and authentication
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
+
 // enable body-parser
 app.use(express.urlencoded({ extended: true }));
 // helper library for enhancing development experience
@@ -27,13 +32,21 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+// apply passport for authentication, thanks `passportLocalMongoose` at user model
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // models
 const Location = require("./models/location");
 const Review = require("./models/review");
-
+// routes
 const locations = require("./routes/locations");
 const reviews = require("./routes/reviews");
+const users = require("./routes/users");
 
 // database connection settings
 mongoose.connect("mongodb://localhost:27017/feelplanet", {
@@ -53,11 +66,13 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
 });
 
+app.use("/", users);
 app.use("/locations", locations);
 app.use("/locations/:id/reviews", reviews);
 

@@ -8,6 +8,10 @@ const LocationSchema = new Schema({
   budget: Number,
   description: String,
   address: String,
+  poster: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,

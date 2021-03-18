@@ -1,22 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const catchAsync = require("../utils/catchAsync");
-const ExpressError = require("../utils/ExpressError");
 const Location = require("../models/location");
-const { locationSchema, reviewSchema } = require("../validateSchemaJoi.js");
-
-const validateLocation = (req, res, next) => {
-  // Server-Side Validation Attempt #2 with Joi
-  const result = locationSchema.validate(req.body);
-  if (result.error) {
-    const message = result.error.details
-      .map((element) => element.message)
-      .join(" ,");
-    throw new ExpressError(message, 400);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn, isPoster, validateLocation } = require("../middleware");
 
 router.get(
   "/",
@@ -26,12 +12,13 @@ router.get(
   })
 );
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("locations/create");
 });
 
 router.post(
   "/",
+  isLoggedIn,
   validateLocation,
   catchAsync(async (req, res, next) => {
     // Server-Side Validation Attempt #1
@@ -39,6 +26,7 @@ router.post(
     //   throw new ExpressError("Invalid Location Info Provided.", 400);
     // }
     const location = new Location(req.body.location);
+    location.poster = req.user._id;
     await location.save();
     req.flash("success", "New Location Added.");
     res.redirect(`/locations/${location._id}`);
@@ -48,7 +36,15 @@ router.post(
 router.get(
   "/:id",
   catchAsync(async (req, res, next) => {
-    const location = await Location.findById(req.params.id).populate("reviews");
+    const location = await Location.findById(req.params.id)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "poster",
+        },
+      })
+      .populate("poster");
+    console.log(location);
     if (!location) {
       req.flash("error", "Target Not Found.");
       res.redirect("/locations");
@@ -59,8 +55,11 @@ router.get(
 
 router.get(
   "/:id/update",
+  isLoggedIn,
+  isPoster,
   catchAsync(async (req, res) => {
-    const location = await Location.findById(req.params.id);
+    const { id } = req.params;
+    const location = await Location.findById(id);
     if (!location) {
       req.flash("error", "Target Not Found.");
       res.redirect("/locations");
@@ -71,6 +70,8 @@ router.get(
 
 router.put(
   "/:id",
+  isLoggedIn,
+  isPoster,
   validateLocation,
   catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -84,6 +85,8 @@ router.put(
 
 router.delete(
   "/:id",
+  isLoggedIn,
+  isPoster,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     await Location.findByIdAndDelete(id);

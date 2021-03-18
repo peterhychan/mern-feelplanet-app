@@ -1,29 +1,18 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const catchAsync = require("../utils/catchAsync");
-const ExpressError = require("../utils/ExpressError");
 const Review = require("../models/review");
 const Location = require("../models/location");
-const { locationSchema, reviewSchema } = require("../validateSchemaJoi.js");
-
-const validateReview = (req, res, next) => {
-  const result = reviewSchema.validate(req.body);
-  if (result.error) {
-    const message = result.error.details
-      .map((element) => element.message)
-      .join(" ,");
-    throw new ExpressError(message, 400);
-  } else {
-    next();
-  }
-};
+const { validateReview, isLoggedIn, isReviewPoster } = require("../middleware");
 
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   catchAsync(async (req, res) => {
     const location = await Location.findById(req.params.id);
     const review = new Review(req.body.review);
+    review.poster = req.user._id;
     location.reviews.push(review);
     await review.save();
     await location.save();
@@ -34,6 +23,8 @@ router.post(
 
 router.delete(
   "/:reviewId",
+  isLoggedIn,
+  isReviewPoster,
   catchAsync(async (req, res) => {
     const { id, reviewId } = req.params;
     await Location.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
