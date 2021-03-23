@@ -1,4 +1,5 @@
 const Location = require("../models/location");
+const { cloudinary } = require("../cloudinary");
 
 module.exports.index = async (req, res) => {
   const locations = await Location.find({});
@@ -15,6 +16,10 @@ module.exports.createLocation = async (req, res, next) => {
   //   throw new ExpressError("Invalid Location Info Provided.", 400);
   // }
   const location = new Location(req.body.location);
+  location.images = req.files.map((file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
   location.poster = req.user._id;
   await location.save();
   req.flash("success", "New Location Added.");
@@ -53,6 +58,20 @@ module.exports.updateLocation = async (req, res) => {
   const location = await Location.findByIdAndUpdate(id, {
     ...req.body.location,
   });
+  const images = req.files.map((file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
+  location.images.push(...images);
+  await location.save();
+  if (req.body.deleteImages) {
+    for (let file of req.body.deleteImages) {
+      await cloudinary.uploader.destroy(file);
+    }
+    await location.updateOne({
+      $pull: { images: { filename: { $in: req.body.deleteImages } } },
+    });
+  }
   req.flash("success", "Location Updated Successfully.");
   res.redirect(`/locations/${location._id}`);
 };

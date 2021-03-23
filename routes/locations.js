@@ -4,10 +4,19 @@ const catchAsync = require("../utils/catchAsync");
 const { isLoggedIn, isPoster, validateLocation } = require("../middleware");
 const locations = require("../controllers/locations");
 
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
+
 router
   .route("/")
   .get(catchAsync(locations.index))
-  .post(isLoggedIn, validateLocation, catchAsync(locations.createLocation));
+  .post(
+    isLoggedIn,
+    upload.array("image"),
+    validateLocation,
+    catchAsync(locations.createLocation)
+  );
 
 router.get("/new", isLoggedIn, locations.renderCreate);
 
@@ -17,6 +26,7 @@ router
   .put(
     isLoggedIn,
     isPoster,
+    upload.array("image"),
     validateLocation,
     catchAsync(locations.updateLocation)
   )

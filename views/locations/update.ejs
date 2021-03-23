@@ -2,7 +2,8 @@
   <div class="row">
     <h1 class="text-center">Edit Location</h1>
     <div class="col-6 offset-3">
-      <form action="/locations/<%=location._id%>?_method=PUT" method="POST" class="needs-validation" novalidate>
+      <form action="/locations/<%=location._id%>?_method=PUT" method="POST" class="needs-validation"
+        enctype="multipart/form-data" novalidate>
         <div class="mb-3">
           <label class="form-label" for="title">Title</label>
           <input class="form-control" type="text" id="title" name="location[title]" value="<%=location.title %>"
@@ -14,17 +15,30 @@
             required>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="image">Image URL</label>
-          <input class="form-control" type="text" id="image" name="location[image]" value="<%=location.image %>"
-            required>
-        </div>
-        <div class="mb-3">
           <label class="form-label" for="budget">Budget for Visiting</label>
           <div class="input-group">
             <span class="input-group-text" id="budget-label">$</span>
             <input type="text" class="form-control" id="budget" placeholder="0.00" aria-label="budget"
               aria-describedby="budget-label" name="location[budget]" value="<%=location.budget %>" required>
           </div>
+        </div>
+        <div class="mb-3">
+          <div class="form-file custom-file">
+            <input type="file" class="form-file-input" id="image" name="image" multiple>
+            <label class="form-file-label" for="image">
+              <span class="form-file-text custom-file-label">Image(s)</span>
+              <span class="form-file-button">Choose</span>
+            </label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <% location.images.forEach(function(image, index) { %>
+            <img src="<%=image.thumbnail %>" class="img-thumbnail" alt="<%=image.thumbnail %>">
+            <div class="form-check-inline">
+              <input type="checkbox" id="image-<%=index%>" name="deleteImages[]" value="<%=image.filename%>">
+            </div>
+            <label for="image-<%=index%>">Check to Delete</label>
+            <% })%>
         </div>
 
         <div class="mb-3">

@@ -2,8 +2,28 @@
   <link rel="stylesheet" href="/css/stars.css">
   <div class="row">
     <div class="col-6">
+      <div id="locationCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <% location.images.forEach((img, index)=> { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : ''%>">
+              <img src="<%= img.url%>" class="w-100 d-block" alt="">
+            </div>
+            <% }) %>
+
+        </div>
+        <% if(location.images.length> 1) {%>
+          <a class="carousel-control-prev" href="#locationCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#locationCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+          <% } %>
+      </div>
       <div class="card mb-3">
-        <img src="<%= location.image%>" class="card-img-top" alt="...">
+        <!-- <img src="<%= location.image%>" class="card-img-top" alt="..."> -->
         <div class="card-body">
           <h5 class="card-title">
             <%= location.title%>
