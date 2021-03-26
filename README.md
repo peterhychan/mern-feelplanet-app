@@ -12,8 +12,8 @@ This project is still being developed. Feel free to submit a push request.
 - [x] Applied Model-View-Controller Model 
 - [x] Image Upload Handling
 - [x] Display the address on a Map
-- [ ] Styling Index Page 
-- [ ] Deployment 
+- [x] Styling Index Page 
+- [x] Deployment 
 
 
 ## Getting Started
