@@ -4,7 +4,9 @@
   "description": "A full-stack application in MERN.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "develop": "nodemon app.js & open http://localhost:3000",
+    "deploy":"git push heroku main"
   },
   "repository": {
     "type": "git",
