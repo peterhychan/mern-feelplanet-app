@@ -11,22 +11,44 @@ ImageSchema.virtual("thumbnail").get(function () {
   return this.url.replace("/upload", "/upload/w_200");
 });
 
-const LocationSchema = new Schema({
-  title: String,
-  images: [ImageSchema],
-  budget: Number,
-  description: String,
-  address: String,
-  poster: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  reviews: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Review",
+const opts = { toJSON: { virtuals: true } };
+
+const LocationSchema = new Schema(
+  {
+    title: String,
+    images: [ImageSchema],
+    budget: Number,
+    description: String,
+    address: String,
+    geometry: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
     },
-  ],
+    poster: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+  },
+  opts
+);
+
+LocationSchema.virtual("properties.popUpMarkup").get(function () {
+  return `
+    <strong><a href="/locations/${this._id}">${this.title}</a><strong>
+    <p>${this.description.substring(0, 25)}...</p>`;
 });
 
 // Mongoose Middleware

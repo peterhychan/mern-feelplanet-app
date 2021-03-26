@@ -6,7 +6,7 @@
         <div class="carousel-inner">
           <% location.images.forEach((img, index)=> { %>
             <div class="carousel-item <%= index === 0 ? 'active' : ''%>">
-              <img src="<%= img.url%>" class="w-100 d-block" alt="">
+              <img src="<%= img.url%>" class="w-100 d-block" alt="<%= img.url%>">
             </div>
             <% }) %>
 
@@ -23,7 +23,6 @@
           <% } %>
       </div>
       <div class="card mb-3">
-        <!-- <img src="<%= location.image%>" class="card-img-top" alt="..."> -->
         <div class="card-body">
           <h5 class="card-title">
             <%= location.title%>
@@ -46,15 +45,12 @@
             <form class="d-inline" action="/locations/<%=location._id%>?_method=DELETE" method="POST">
               <button class="btn btn-danger">Remove</button>
             </form>
+          </div>
             <% } %>
-          </div>
-          <div class="card-footer text-muted">
-            2 days ago
-          </div>
       </div>
-
     </div>
     <div class="col-6">
+      <div id='map' style='width: 100%; height: 300px;'></div>
       <% if(currentUser){ %>
         <h2>Leave a Review</h2>
         <form action="/locations/<%=location._id%>/reviews" method="POST" class="mb-3 needs-validation" novalidate>
@@ -76,7 +72,7 @@
             <label class="form-label" for="body">Review</label>
             <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
             <div class="valid-feedback">
-              So far so good!
+              Nice!
             </div>
           </div>
           <button class="btn btn-success">Submit</button>
@@ -103,3 +99,8 @@
             <% } %>
     </div>
   </div>
+  <script>
+    const mbxToken = '<%-process.env.MAPBOX_TOKEN%>'
+    const map_location = <%-JSON.stringify(location) %>
+  </script>
+  <script src="/js/mbxHelper.js"></script>

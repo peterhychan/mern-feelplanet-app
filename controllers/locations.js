@@ -1,8 +1,11 @@
 const Location = require("../models/location");
 const { cloudinary } = require("../cloudinary");
+// mapbox settings
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mbxClient = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
 
 module.exports.index = async (req, res) => {
-  const locations = await Location.find({});
+  const locations = await Location.find({}).populate("popupText");
   res.render("locations/index", { locations });
 };
 
@@ -15,7 +18,14 @@ module.exports.createLocation = async (req, res, next) => {
   // if (!req.body.location) {
   //   throw new ExpressError("Invalid Location Info Provided.", 400);
   // }
+  const mbxFetch = await mbxClient
+    .forwardGeocode({
+      query: req.body.location.address,
+      limit: 1,
+    })
+    .send();
   const location = new Location(req.body.location);
+  location.geometry = mbxFetch.body.features[0].geometry;
   location.images = req.files.map((file) => ({
     url: file.path,
     filename: file.filename,

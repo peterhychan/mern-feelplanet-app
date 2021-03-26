@@ -10,8 +10,9 @@ This project is still being developed. Feel free to submit a push request.
 - [x] Authorization for editing the user's own reviews
 - [x] Integration with Bootstrap 5
 - [x] Applied Model-View-Controller Model 
-- [ ] Image Upload Handling
-- [ ] Display the address on a Map
+- [x] Image Upload Handling
+- [x] Display the address on a Map
+- [ ] Styling Index Page 
 - [ ] Deployment 
 
 
@@ -47,6 +48,8 @@ nodemon app.js
 - `Ejs`
 - `MongoDB`
 - `Bootstrap 5`
+- `Mapbox API`
+- `Cloudinary Image Upload`
 
 ## License
 
