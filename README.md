@@ -2,6 +2,8 @@
 
  Where-To-Visit is a full-stack application written in HTML, CSS, JavaScript, ExpressJS, and MongoDB. It is the platform designed for users sharing places visited, along with ratings and reviews. 
 
+ The application has now successfully deployed on [Heroku](https://where-to-visit.herokuapp.com/).
+
 ## Project status / Contributing
 
 This project is still being developed. Feel free to submit a push request. 
@@ -14,6 +16,7 @@ This project is still being developed. Feel free to submit a push request.
 - [x] Display the address on a Map
 - [x] Styling Index Page 
 - [x] Deployment 
+- [ ] TBD 
 
 
 ## Getting Started
