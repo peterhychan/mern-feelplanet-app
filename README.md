@@ -16,8 +16,6 @@ This project is still being developed. Feel free to submit a push request.
 - [x] Display the address on a Map
 - [x] Styling Index Page 
 - [x] Deployment 
-- [ ] TBD 
-
 
 ## Getting Started
 
